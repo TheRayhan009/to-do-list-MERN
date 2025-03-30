@@ -64,5 +64,9 @@ let updateData = async(req,res)=>{
     }});
     res.send("Data Updated");
 }
-
-module.exports = {getData,updateData,delData,addData};
+let comTask = async(req,res)=>{
+    let upData = req.body.id
+    let data = await TaskModel.findByIdAndUpdate(upData,{$set:{"doneOrNot":true}});
+    res.send("Task Completed");
+}
+module.exports = {getData,updateData,delData,addData, comTask};

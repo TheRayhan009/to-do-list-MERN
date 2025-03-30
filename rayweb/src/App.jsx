@@ -15,6 +15,7 @@ export default function App() {
       
       <Header />
       <TodoApp />
+      {/* <Foote/> */}
 
     </>
   )

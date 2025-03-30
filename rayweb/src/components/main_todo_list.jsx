@@ -25,7 +25,7 @@ export default function TodoApp() {
         if (newTask !== "") {
             let request = await axios.post("http://localhost:8000/add",{
                 "username":"therayhan009",
-                "task":newTask
+                "task":newTask,
             });
             e.nativeEvent.srcElement[0].value="";
     
@@ -34,18 +34,35 @@ export default function TodoApp() {
         
     }
 
+    let delData = async (taskID)=>{
+      let deleteData = await axios.post("http://localhost:8000/del",{
+        "id":taskID
+      })
+      loadData();
+    }
+
+    let TaskDone = async(Taskid)=>{
+      let ComTaskData = await axios.post("http://localhost:8000/comtask",{
+        "id":Taskid
+      });
+      // console.log("data:",ComTaskData );
+      loadData();
+      return <Foote /> ;
+
+    }
+
   return (
     <Container style={{
         // display: "flex", 
         justifyContent: "center", 
         alignItems: "center",
-        marginLeft:"22em",
-        minWidth:"50vh",
-        maxWidth:"45em",
+        marginLeft:"14em",
+        minWidth:"100vh",
+        maxWidth:"200vh",
         // maxHeight:"10vh",
         }}>
       <Row className="justify-content-center" >
-        <Col md={800} >
+        <Col md={900} >
           <Card className="shadow-sm p-4">
             <Card.Body>
               <Form onSubmit={addTask}>
@@ -53,23 +70,34 @@ export default function TodoApp() {
               
                 <Card className="shadow-sm mt-3" style={{ maxHeight: "300px", overflowY: "auto" }}>
                 {tasks.map((task) => (
-                    <ListGroup className="mt-3" id={task._id}>
-                    <ListGroup.Item className="d-flex align-items-center">
+                      <ListGroup className="mt-3" id={task._id}>
+                      <ListGroup.Item className="d-flex align-items-center">
                         {/* Checkbox for task completion */}
                         <Form.Check 
-                        className="me-2 custom-checkbox"
-                        style={{ transform: "scale(1.2)" }} 
+                          className="me-2 custom-checkbox" 
+                          style={{ transform: "scale(1.2)" }} 
+                          onChange={() => TaskDone(task._id)}
+                          checked={task.doneOrNot}
+                          disabled={task.doneOrNot}
                         />
-                        
+
                         {/* Task Description */}
-                        <span style={{ fontWeight: 'bold', flex: 1 ,minWidth:" 30em"}}>{task.task}</span>
+                        <span 
+                          className="fw-bold flex-grow-1" 
+                          style={task.doneOrNot ? { textDecoration: "line-through", color: "gray" } : {}}>
+                          {task.task}
+                        </span>
+
+                        {/* Edit & Delete Buttons */}
+                        <Button variant="primary" className="ms-2" >Edit</Button>
+                        <Button variant="danger" className="ms-2" onClick={() => delData(task._id)}>Delete</Button>
 
                         {/* Time and Date Display */}
-                        <div className="text-muted" style={{ fontSize: "0.9em", textAlign: "right" , marginLeft: "-2em" }}>
-                        <div>{task.time}</div>
-                        <div>{task.date}</div>
+                        <div className="text-muted ms-auto text-end" style={{ fontSize: "0.9em"} }>
+                          <div>{task.time}</div>
+                          <div style={{marginLeft:"15px"}}>{task.date}</div>
                         </div>
-                    </ListGroup.Item>
+                      </ListGroup.Item>
                     </ListGroup>
                 ))}
                 </Card>
